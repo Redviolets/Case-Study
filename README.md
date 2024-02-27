@@ -22,4 +22,6 @@ Aggregate the data so it's useful and accessible. Organize and format the data, 
 After finish all the data analysis, creating the right visualizations, give stakeholders the recommendations based on the trends and insights from the data.
 # Recommendation
 - since summber is the peak time, launch more advertisement to attract more people to become members
+- Encourage annual members to use bikes more on weekend
+- Consider offering longer retal periods for casual riders
   
