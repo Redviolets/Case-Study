@@ -1,0 +1,111 @@
+# Descriptive analysis on ride_length (all figures in seconds)
+mean(all_trips_v2$ride_length) #straight average (total ride length / rides) 1439.315
+median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths 691
+max(all_trips_v2$ride_length) #longest ride 10632022
+min(all_trips_v2$ride_length) #shortest ride 1
+
+# Condense the four lines above to one line using summary() on the specific attribute
+summary(all_trips_v2$ride_length)
+ Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+       1      402      691     1439     1250 10632022 
+# Compare members and casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+ all_trips_v2$member_casual all_trips_v2$ride_length
+1                     casual                3556.8495
+2                     member                 848.3654
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
+ all_trips_v2$member_casual all_trips_v2$ride_length
+1                     casual                     1542
+2                     member                      579
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
+ all_trips_v2$member_casual all_trips_v2$ride_length
+1                     casual                 10632022
+2                     member                  9056634
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+ all_trips_v2$member_casual all_trips_v2$ride_length
+1                     casual                        2
+2                     member                        1
+
+# See the average ride time by each day for members vs casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
+# Fix the date of the week in order.
+all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+#See the average ride time by each month for members vs casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$month, FUN = mean)
+
+# Analyze ridership data by type and weekday
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()	,average_duration = mean(ride_length)) %>%	#calculates the number of rides and average duration
+  arrange(member_casual, weekday)								# sorts by usertype and weekday
+member_casual weekday number_of_rides average_duration
+   <chr>         <ord>             <int>            <dbl>
+ 1 casual        Sun              185059            3559.
+ 2 casual        Mon              105188            3360.
+ 3 casual        Tue               93238            3562.
+ 4 casual        Wed               94946            3703.
+ 5 casual        Thu              105599            3803.
+ 6 casual        Fri              125779            3769.
+ 7 casual        Sat              215536            3340.
+ 8 member        Sun              292198             927.
+ 9 member        Mon              520703             846.
+10 member        Tue              566722             830.
+11 member        Wed              558254             814.
+12 member        Thu              548160             812.
+13 member        Fri              512462             826.
+14 member        Sat              317267             974.
+# Analyze ridership data by type and month
+all_trips_v2 %>%
+  group_by(member_casual, month) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(member_casual,month)
+member_casual month number_of_rides average_duration
+   <chr>         <chr>           <int>            <dbl>
+ 1 casual        01              12387            7151.
+ 2 casual        02              14952            8128.
+ 3 casual        03              40538            3813.
+ 4 casual        04              47744            3057.
+ 5 casual        05              81624            3074.
+ 6 casual        06             130218            2755.
+ 7 casual        07             175632            3587.
+ 8 casual        08             186889            4020.
+ 9 casual        09             129173            3100.
+10 casual        10              71035            3540.
+# ℹ 14 more rows
+# ℹ Use `print(n = ...)` to see more rows
+
+# Visualize the number of rides by rider type in weekdays
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+#Viusalize the number of rides by rider type in month
+all_trips_v2 %>% 
+  group_by(member_casual, month) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, month)  %>% 
+  ggplot(aes(x = month, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+# Visualization for average duration
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+#Create a csv file, export summary file for further analysis
+counts <- aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+write.csv(counts,file = "Avg_ride_Length.csv",row.names = FALSE)
