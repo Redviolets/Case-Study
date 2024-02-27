@@ -1,0 +1,94 @@
+library(tidyverse)
+library(conflicted)
+library(ggplot2)
+# Set dplyr::filter and dplyr::lag as the default choices
+conflict_prefer("filter", "dplyr")
+conflict_prefer("lag", "dplyr")
+
+#Collect Data
+# # Upload Divvy datasets (csv files) here
+Q1_2019 <- read_csv("Divvy_Trips_2019_Q1.csv")
+Q2_2019 <- read_csv("Divvy_Trips_2019_Q2.csv")
+Q3_2019 <- read_csv("Divvy_Trips_2019_Q3.csv")
+Q4_2019 <- read_csv("Divvy_Trips_2019_Q4.csv")
+Q1_2020 <- read_csv("Divvy_Trips_2020_Q1.csv") 
+
+#Combine data into a single File
+  ## check column name, if not match, then rename them to join all the file into single one.
+colnames(Q1_2019)
+colnames(Q2_2019)
+colnames(Q3_2019)
+colnames(Q4_2019)
+colnames(Q1_2020)
+    
+# Rename columns  to make them consistent with Q1_2020 
+(Q1_2019 <- rename(Q1_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid
+                   ,started_at = start_time
+                   ,ended_at = end_time
+                   ,start_station_name = from_station_name
+                   ,start_station_id = from_station_id
+                   ,end_station_name = to_station_name
+                   ,end_station_id = to_station_id
+                   ,member_casual = usertype
+))
+(Q2_2019 <- rename(Q2_2019
+                   ,ride_id = "01 - Rental Details Rental ID"
+                   ,rideable_type = "01 - Rental Details Bike ID"
+                   ,started_at = "01 - Rental Details Local Start Time"
+                   ,ended_at = "01 - Rental Details Local End Time"
+                   ,start_station_name = "03 - Rental Start Station Name"
+                   ,start_station_id = "03 - Rental Start Station ID"
+                   ,end_station_name = "02 - Rental End Station Name"
+                   ,end_station_id = "02 - Rental End Station ID"
+                   ,member_casual = "User Type"
+))
+(Q3_2019 <- rename(Q3_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid
+                   ,started_at = start_time
+                   ,ended_at = end_time
+                   ,start_station_name = from_station_name
+                   ,start_station_id = from_station_id
+                   ,end_station_name = to_station_name
+                   ,end_station_id = to_station_id
+                   ,member_casual = usertype
+))
+(Q4_2019 <- rename(Q4_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid
+                   ,started_at = start_time
+                   ,ended_at = end_time
+                   ,start_station_name = from_station_name
+                   ,start_station_id = from_station_id
+                   ,end_station_name = to_station_name
+                   ,end_station_id = to_station_id
+                   ,member_casual = usertype
+))
+    
+# Inspect the dataframes and look for incongruencies
+str(Q1_2019)
+str(Q2_2019)
+str(Q3_2019)
+str(Q4_2019)
+str(Q1_2020)
+    
+# Convert ride_id and rideable_type to character so that they can stack correctly
+Q1_2019 <-  mutate(Q1_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+Q2_2019 <-  mutate(Q2_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+Q3_2019 <-  mutate(Q3_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+Q4_2019 <-  mutate(Q4_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+
+# Stack individual quarter's data frames into one big data frame
+all_trips <- bind_rows(Q1_2019, Q2_2019, Q3_2019, Q4_2019, Q1_2020)
+
+# Remove lat, long, birthyear, and gender fields as this data was dropped beginning in 2020
+all_trips <- all_trips %>%  
+  select(-c("start_lat", "start_lng", "end_lat", "end_lng", "birthyear", "gender", "Member Gender", "01 - Rental Details Duration In Seconds Uncapped",
+            "05 - Member Details Member Birthday Year", "tripduration"))
+
