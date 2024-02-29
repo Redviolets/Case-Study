@@ -18,6 +18,7 @@ Aggregate the data so it's useful and accessible. Organize and format the data, 
 - From avarage duration in weekdays. While Casual rider has slightly longer distance trip on weekend, membership ride's slighly longer over weekday.
 - From the number of rides through the year. Both member and casual riders are high during the summer time
 - From the number of rides through the week. Members has more rides during the weekdays, and Casual has more rides during the weekend
+- ![Average Duration](./Acerage_Duration.png)
 # Act
 After finish all the data analysis, creating the right visualizations, give stakeholders the recommendations based on the trends and insights from the data.
 # Recommendation
