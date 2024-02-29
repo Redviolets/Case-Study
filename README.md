@@ -19,7 +19,7 @@ Aggregate the data so it's useful and accessible. Organize and format the data, 
 - From the number of rides through the year. Both member and casual riders are high during the summer time
 - From the number of rides through the week. Members has more rides during the weekdays, and Casual has more rides during the weekend
 ![Average Duration](./Average_Duration.png)
-![Year of rides](./Rides+during+the+Year.png)
+![Year of rides](./Rides%20during%20the%20Year.png)
 ![Week of rides](./Rides%20on%20weekday.png)
 # Act
 After finish all the data analysis, creating the right visualizations, give stakeholders the recommendations based on the trends and insights from the data.
